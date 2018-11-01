@@ -9,7 +9,17 @@ const eastDirection = '1';
 const westDirection = '2';
 const urlRoot = 'https://reisapi.ruter.no/StopVisit/GetDepartures/';
 
-function callAjax(url, callback){
+const departures = [
+	{ group: "s-select", origin: stopAvlos, originName: "Avløs", direction: eastDirection, destinationName: "Jernbanetorget", lines: [3] },
+	{ group: "s-select", origin: stopToyen, originName: "Tøyen", direction: eastDirection, destinationName: "Nøklevann", lines: [3] },
+	{ group: "s-select", origin: stopJernbaneTorget, originName: "Jernbanetorget", direction: eastDirection, destinationName: "Avløs", lines: [3] },
+	{ group: "hm-select", origin: stopKolsas, originName: "Kolsås", direction: eastDirection, destinationName: "Majorstua", lines: [3] },
+	{ group: "hm-select", origin: stopMajorstua, originName: "Majorstua", direction: westDirection, destinationName: "Kolsås", lines: [3] },
+	{ group: "hm-select", origin: stopNational, originName: "Nationaltheatret", direction: westDirection, destinationName: "Kolsås", lines: [3] },
+	{ group: "hm-select", origin: stopGronland, originName: "Grønland", direction: westDirection, destinationName: "Kolsås", lines: [3] },
+];
+
+function callAjax(url, callback) {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
@@ -66,40 +76,21 @@ function loadDepartureTimes() {
 	document.getElementById('departure-loader').style.display = 'inline-block';
 }
 
-window.onload = function(e){ 
-    document.getElementById('avlos-jernbaneTorget').addEventListener('click', function() {
-	    getDeparturesFromStop(urlRoot + stopAvlos + '?linenames=3', eastDirection);
-    	setSelectedStop(this);
-	});
-	
-	document.getElementById('toyen-bogerud').addEventListener('click', function() {
-		getDeparturesFromStop(urlRoot + stopToyen + '?linenames=3', eastDirection);
-		setSelectedStop(this);
-	});
-		
-	document.getElementById('jernbaneTorget-avlos').addEventListener('click', function() {
-		getDeparturesFromStop(urlRoot + stopJernbaneTorget + '?linenames=3', westDirection);
-		setSelectedStop(this);
-	});
-	
-	document.getElementById('kolsas-majorstua').addEventListener('click', function() {
-		getDeparturesFromStop(urlRoot + stopKolsas + '?linenames=3', eastDirection);
-		setSelectedStop(this);
-	});
-	
-	document.getElementById('majorstua-kolsas').addEventListener('click', function() {
-		getDeparturesFromStop(urlRoot + stopMajorstua + '?linenames=3', westDirection);
-		setSelectedStop(this);
-	});
-	
-	document.getElementById('national-kolsas').addEventListener('click', function() {
-		getDeparturesFromStop(urlRoot + stopNational + '?linenames=3', westDirection);
-		setSelectedStop(this);
-	});
-	
-	document.getElementById('gronland-kolsas').addEventListener('click', function() {
-		getDeparturesFromStop(urlRoot + stopGronland + '?linenames=3', westDirection);
-		setSelectedStop(this);
+window.onload = function (e) {
+	var template = document.getElementsByClassName("stop-selector-item-template")[0];
+	departures.forEach(function (departure) {
+		var el = template.cloneNode(true);
+		el.removeAttribute("style");
+		el.className = el.className.replace("-template", "");
+		el.querySelector(".origin").innerHTML = departure.originName;
+		el.querySelector(".destination").innerHTML = departure.destinationName;
+		el.dataset.url = urlRoot + departure.origin + '?linenames=' + departure.lines.join(",");
+		el.dataset.direction = departure.direction;
+		document.getElementById(departure.group).appendChild(el);
+		el.addEventListener('click', function () {
+			getDeparturesFromStop(el.dataset.url, el.dataset.direction);
+			setSelectedStop(this);
+		})
 	});
 	
 	document.getElementById('refresh-button').addEventListener('click', function() {
