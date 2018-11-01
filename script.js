@@ -5,11 +5,13 @@ const stopMajorstua = 3010200;
 const stopGronland = 3010610;
 const stopJernbaneTorget = 3010011;
 const stopNational = 3010031;
+const stopStoro = 3012120;
 const eastDirection = '1';
 const westDirection = '2';
 const urlRoot = 'https://reisapi.ruter.no/StopVisit/GetDepartures/';
 
 const departures = [
+	{ group: "s-select", origin: stopStoro, originName: "Storo", direction: westDirection, destinationName: "Jernbanetorget", lines: [4, 5] },
 	{ group: "s-select", origin: stopAvlos, originName: "Avløs", direction: eastDirection, destinationName: "Jernbanetorget", lines: [3] },
 	{ group: "s-select", origin: stopToyen, originName: "Tøyen", direction: eastDirection, destinationName: "Nøklevann", lines: [3] },
 	{ group: "s-select", origin: stopJernbaneTorget, originName: "Jernbanetorget", direction: eastDirection, destinationName: "Avløs", lines: [3] },
